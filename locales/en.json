@@ -1,0 +1,16 @@
+{
+    "gathering_herb": "Gathering herb...",
+    "inventory_full_title": "Inventory full",
+    "inventory_full_description": "You don't have enough space to carry this herb.",
+    "crafting_tonic": "Crafting tonic...",
+    "craft_locked_title": "Not a herbalist",
+    "craft_locked_description": "Only herbalists can use the tonic crafting station.",
+    "craft_missing_title": "Missing ingredients",
+    "craft_missing_description": "You don't have everything this tonic needs.",
+    "tonic_cooldown_title": "Still feeling the effects",
+    "tonic_cooldown_description": "You need to wait a bit before drinking another tonic.",
+    "opening_mysterybox": "Opening box...",
+    "open_mysterybox_prompt": "[E] Open Mystery Box",
+    "mysterybox_found_title": "Mystery box",
+    "mysterybox_found_description": "You found a collection of herbs, including a rare orchid!"
+}
