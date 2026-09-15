@@ -35,7 +35,7 @@ Players gather herbs from world-placed nodes, brew them into tonics at a mortar 
 - Queued delivery that respects Discord's rate limits, with automatic retry on HTTP 429.
 
 ### Version checking
-- On start, checks the resource's version against `version.txt` in the [rex-versioncheckers](https://github.com/RexShackGaming/rex-versioncheckers) GitHub repo and prints a warning to console if you're out of date.
+- On start, checks the resource's version against `version.txt` in the [rsg-versioncheckers](https://github.com/Rexshack-RedM/rsg-versioncheckers) GitHub repo and prints a warning to console if you're out of date.
 
 ---
 
