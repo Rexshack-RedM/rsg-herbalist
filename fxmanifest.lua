@@ -35,7 +35,6 @@ files {
     'html/index.html',
     'html/style.css',
     'html/script.js',
-    'installation/images/*.png',
     'locales/*.json',
 }
 
