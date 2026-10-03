@@ -6,7 +6,7 @@ lua54 'yes'
 author 'RexShack'
 name 'rsg-herbalist'
 description 'Herbalist script for RSG Framework'
-version '2.0.4'
+version '2.0.5'
 
 shared_scripts {
     '@ox_lib/init.lua',

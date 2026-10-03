@@ -325,14 +325,20 @@ local function TryGather()
 
     local ped = PlayerPedId()
     TaskStartScenarioInPlace(ped, 'WORLD_HUMAN_GATHER_HERBS', 0, true)
-    local completed = lib.progressCircle({
-        duration = Config.GatherDurationMs,
-        label = locale('gathering_herb'),
-        position = 'bottom',
-        useWhileDead = false,
-        canCancel = true,
-        disable = { car = true, move = true, combat = true },
-    })
+    local completed
+    if Config.GatherProgressBarEnabled then
+        completed = lib.progressCircle({
+            duration = Config.GatherDurationMs,
+            label = locale('gathering_herb'),
+            position = 'bottom',
+            useWhileDead = false,
+            canCancel = true,
+            disable = { car = true, move = true, combat = true },
+        })
+    else
+        Wait(Config.GatherDurationMs)
+        completed = true
+    end
     ClearPedTasks(ped)
     if not completed then isGathering = false; return end
 

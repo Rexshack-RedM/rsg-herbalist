@@ -112,14 +112,20 @@ local function TryOpenBox()
 
     local ped = PlayerPedId()
     TaskStartScenarioInPlace(ped, 'WORLD_HUMAN_CROUCH_INSPECT', 0, true)
-    local completed = lib.progressCircle({
-        duration = Config.GatherDurationMs,
-        label = locale('opening_mysterybox'),
-        position = 'bottom',
-        useWhileDead = false,
-        canCancel = true,
-        disable = { car = true, move = true, combat = true },
-    })
+    local completed
+    if Config.GatherProgressBarEnabled then
+        completed = lib.progressCircle({
+            duration = Config.GatherDurationMs,
+            label = locale('opening_mysterybox'),
+            position = 'bottom',
+            useWhileDead = false,
+            canCancel = true,
+            disable = { car = true, move = true, combat = true },
+        })
+    else
+        Wait(Config.GatherDurationMs)
+        completed = true
+    end
     ClearPedTasks(ped)
     if not completed then isOpening = false; return end
 

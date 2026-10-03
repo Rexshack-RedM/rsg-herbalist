@@ -11,6 +11,12 @@ Config.CompositeLoadTimeoutMs = 10000  -- max time to wait for a composite asset
 
 -- Gathering
 Config.GatherDurationMs = 3000            -- length of the gather progress bar
+
+-- When true, gathering herbs and opening the mystery box show an ox_lib
+-- progress circle (cancellable) for GatherDurationMs. When false, the bar is
+-- hidden - the action still takes GatherDurationMs, just isn't shown or
+-- cancellable.
+Config.GatherProgressBarEnabled = false
 Config.GatherCooldownMs = 2500            -- server-side minimum time between gather attempts per player
 Config.ScopeRangeGather = 3.5             -- server-side distance check before a gather is accepted
 Config.SuppressionWearoffSeconds = 10 * 60 -- how long a gathered node stays empty before it regrows
