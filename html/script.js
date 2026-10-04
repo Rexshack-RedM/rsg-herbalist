@@ -5,6 +5,20 @@
     const panelEl = document.getElementById('panel');
     const headerEl = document.getElementById('panel-header');
 
+    // UI strings are supplied by Lua (ox_lib locales/*.json) on every open.
+    let L = {};
+    function t(key) {
+        return L[key] ?? '';
+    }
+
+    function applyLocale(strings) {
+        L = strings || {};
+        document.getElementById('ui-title').textContent = t('title');
+        document.getElementById('ui-subtitle').textContent = t('subtitle');
+        document.title = t('title');
+        closeBtn.title = t('close');
+    }
+
     function resourceName() {
         return (window.GetParentResourceName && GetParentResourceName()) || 'rsg-herbalist';
     }
@@ -31,10 +45,10 @@
 
     function formatDuration(ms) {
         const totalSeconds = Math.round(ms / 1000);
-        if (totalSeconds < 60) return `${totalSeconds}s`;
+        if (totalSeconds < 60) return `${totalSeconds}${t('seconds')}`;
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
-        return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
+        return seconds > 0 ? `${minutes}${t('minutes')} ${seconds}${t('seconds')}` : `${minutes}${t('minutes')}`;
     }
 
     function ingredientPill(ingredient) {
@@ -65,8 +79,8 @@
                         ${tonic.ingredients.map(ingredientPill).join('')}
                     </div>
                     <div class="recipe-bottom-row">
-                        <span class="output-label">Yields <b>${tonic.outputAmount}x ${escapeHtml(tonic.label)}</b></span>
-                        <button class="craft-btn" ${craftable ? '' : 'disabled'} data-id="${escapeHtml(tonic.id)}">Craft</button>
+                        <span class="output-label">${escapeHtml(t('yields'))} <b>${tonic.outputAmount}x ${escapeHtml(tonic.label)}</b></span>
+                        <button class="craft-btn" ${craftable ? '' : 'disabled'} data-id="${escapeHtml(tonic.id)}">${escapeHtml(t('craft'))}</button>
                     </div>
                 </div>
             </div>
@@ -75,7 +89,7 @@
 
     function render(tonics) {
         if (!tonics || tonics.length === 0) {
-            listEl.innerHTML = '<div class="empty-state">No tonic recipes are configured.</div>';
+            listEl.innerHTML = `<div class="empty-state">${escapeHtml(t('empty'))}</div>`;
             return;
         }
         listEl.innerHTML = tonics.map(recipeCard).join('');
@@ -140,7 +154,8 @@
     window.addEventListener('mousemove', onDragMove);
     window.addEventListener('mouseup', onDragEnd);
 
-    function open(tonics) {
+    function open(tonics, strings) {
+        applyLocale(strings);
         render(tonics);
         appEl.classList.remove('hidden');
     }
@@ -153,7 +168,7 @@
     window.addEventListener('message', (event) => {
         const data = event.data || {};
         if (data.action === 'open') {
-            open(data.tonics);
+            open(data.tonics, data.locale);
         } else if (data.action === 'close') {
             appEl.classList.add('hidden');
         }

@@ -12,5 +12,21 @@
     "opening_mysterybox": "Opening box...",
     "open_mysterybox_prompt": "[E] Open Mystery Box",
     "mysterybox_found_title": "Mystery box",
-    "mysterybox_found_description": "You found a collection of herbs, including a rare orchid!"
+    "mysterybox_found_description": "You found a collection of herbs, including a rare orchid!",
+    "tonic_healing_label": "Healing Tonic",
+    "tonic_healing_description": "A basic restorative tonic brewed from yarrow and mint.",
+    "tonic_stamina_label": "Stamina Tonic",
+    "tonic_stamina_description": "Restores stamina, brewed from ginseng roots.",
+    "tonic_antidote_label": "Snake Oil Antidote",
+    "tonic_antidote_description": "Counters poison and venom, brewed from sage and feverfew.",
+    "tonic_energy_label": "Energy Tonic",
+    "tonic_energy_description": "A sharp pick-me-up brewed from bitterweed and berries.",
+    "ui_title": "Tonic Crafting",
+    "ui_subtitle": "Herbalist Workbench",
+    "ui_close": "Close",
+    "ui_yields": "Yields",
+    "ui_craft": "Craft",
+    "ui_empty": "No tonic recipes are configured.",
+    "ui_seconds_short": "s",
+    "ui_minutes_short": "m"
 }

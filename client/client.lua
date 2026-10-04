@@ -463,8 +463,8 @@ local function BuildTonicPayload()
         local outputDef = RSGCore.Shared.Items[tonic.output.item]
         list[i] = {
             id = tonic.id,
-            label = tonic.label,
-            description = tonic.description,
+            label = locale(tonic.label),
+            description = tonic.description and locale(tonic.description) or '',
             image = tonic.image or (outputDef and outputDef.image) or (tonic.output.item .. '.png'),
             durationMs = tonic.durationMs,
             outputAmount = tonic.output.amount,
@@ -499,6 +499,16 @@ local function OpenTonicMenu()
     SendNUIMessage({
         action = 'open',
         tonics = BuildTonicPayload(),
+        locale = {
+            title = locale('ui_title'),
+            subtitle = locale('ui_subtitle'),
+            close = locale('ui_close'),
+            yields = locale('ui_yields'),
+            craft = locale('ui_craft'),
+            empty = locale('ui_empty'),
+            seconds = locale('ui_seconds_short'),
+            minutes = locale('ui_minutes_short'),
+        },
     })
 end
 

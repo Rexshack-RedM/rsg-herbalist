@@ -198,8 +198,8 @@ Config.MysteryBox = {
 
 -- Tonic recipes. Each entry:
 --   id          unique recipe identifier
---   label       display name shown in the crafting UI
---   description short flavour/help text shown in the UI
+--   label       locale key (locales/*.json) for the display name shown in the crafting UI
+--   description locale key (locales/*.json) for the short flavour/help text shown in the UI
 --   image       filename (in rsg-inventory's image folder) used for the output preview
 --   durationMs  how long the crafting progress bar takes
 --   ingredients list of { item = <inventory item name>, amount = <required count> }
@@ -207,8 +207,8 @@ Config.MysteryBox = {
 Config.Tonics = {
     {
         id = 'tonic_healing',
-        label = 'Healing Tonic',
-        description = 'A basic restorative tonic brewed from yarrow and mint.',
+        label = 'tonic_healing_label', -- locale key (locales/*.json)
+        description = 'tonic_healing_description', -- locale key (locales/*.json)
         image = 'tonic_healing.png',
         durationMs = 8000,
         ingredients = {
@@ -219,8 +219,8 @@ Config.Tonics = {
     },
     {
         id = 'tonic_stamina',
-        label = 'Stamina Tonic',
-        description = 'Restores stamina, brewed from ginseng roots.',
+        label = 'tonic_stamina_label', -- locale key (locales/*.json)
+        description = 'tonic_stamina_description', -- locale key (locales/*.json)
         image = 'tonic_stamina.png',
         durationMs = 10000,
         ingredients = {
@@ -231,8 +231,8 @@ Config.Tonics = {
     },
     {
         id = 'tonic_antidote',
-        label = 'Snake Oil Antidote',
-        description = 'Counters poison and venom, brewed from sage and feverfew.',
+        label = 'tonic_antidote_label', -- locale key (locales/*.json)
+        description = 'tonic_antidote_description', -- locale key (locales/*.json)
         image = 'tonic_antidote.png',
         durationMs = 12000,
         ingredients = {
@@ -244,8 +244,8 @@ Config.Tonics = {
     },
     {
         id = 'tonic_energy',
-        label = 'Energy Tonic',
-        description = 'A sharp pick-me-up brewed from bitterweed and berries.',
+        label = 'tonic_energy_label', -- locale key (locales/*.json)
+        description = 'tonic_energy_description', -- locale key (locales/*.json)
         image = 'tonic_energy.png',
         durationMs = 6000,
         ingredients = {
