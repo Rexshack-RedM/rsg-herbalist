@@ -181,7 +181,7 @@ Config.MysteryBox = {
         'herb_desert_sage', 'herb_english_mace', 'herb_evergreen_huckleberry', 'herb_golden_currant',
         'herb_hummingbird_sage', 'herb_indian_tobacco', 'herb_milkweed', 'herb_oleander_sage',
         'herb_oregano', 'herb_parasol_mushroom', 'herb_prairie_poppy', 'herb_red_raspberry',
-        'herb_red_sage', 'herb_wild_carrot', 'herb_wild_feverfew', 'herb_wild_mint',
+        'herb_red_sage', 'herb_wild_feverfew', 'herb_wild_mint',
         'herb_wild_rhubarb', 'herb_wintergreen_berry', 'herb_wisteria', 'herb_yarrow',
     },
 
