@@ -7,7 +7,7 @@ ox_lib 'locale'
 author 'RexShack'
 name 'rsg-herbalist'
 description 'Herbalist script for RSG Framework'
-version '3.0.1'
+version '3.0.2'
 
 shared_scripts {
     '@ox_lib/init.lua',
