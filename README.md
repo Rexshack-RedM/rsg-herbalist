@@ -13,7 +13,8 @@ Players gather herbs from world-placed nodes, brew them into tonics at a mortar 
 - Nodes stream in/out as players approach (composite entity pickups, not peds/objects), so there's no meaningful client-side load cost even with thousands of spawn points defined.
 - Press the game's native "pick up" binding near a node to gather; a progress bar (via `ox_lib`) plays the gather animation.
 - Gathered nodes go empty and regrow after a configurable cooldown, becoming a new (server-picked) plant type from the same zone so it isn't the same herb every time.
-- Every gather is validated server-side: is this a real spawn point, is it currently suppressed, is the claimed plant actually what's live there right now, is the player within range, and have they gathered too recently. A modified client can, at best, ask for something that's actually there - it can never grant itself an item directly.
+- Every gather is validated server-side: the client only sends a spawn **id**; the server knows which plant is live there, checks it isn't already picked, that the player is within range and not on cooldown, and that they have room before granting the item.
+- Spawn ids come from `shared/spawns.lua`, which builds the same deterministic list on client and server (no float-formatted coordinate keys, so no client/server mismatches).
 
 ### Tonic crafting
 - Four configurable tonic recipes (Healing, Stamina, Snake Oil Antidote, Energy), each with its own ingredients, craft time, and output.
@@ -21,12 +22,12 @@ Players gather herbs from world-placed nodes, brew them into tonics at a mortar 
 - A draggable, NUI-based crafting menu shows every recipe, how many of each ingredient the player is currently carrying, and whether they have enough to craft.
 - The server independently re-validates the job lock, ingredient counts, and craft cooldown on every request - the NUI is purely presentational and can't be used to grant anything on its own.
 - Optional job lock (`Config.LockTonicCraftingToJob`) restricts crafting to a specific job.
-- Crafting plays a configurable animation sequence and scripted camera; if ingredients are removed but the finished tonic can't be granted (full inventory), they're automatically refunded.
+- Crafting plays a configurable animation sequence and scripted camera. Ingredients are only taken when the craft **finishes** (the server checks the recipe time actually elapsed and re-checks ingredients and inventory space), so cancelling or disconnecting mid-craft never loses anything.
 - Finished tonics apply a configurable health/stamina boost when consumed, using the same "overpower" native the game's own tonics use, with a shared cooldown between tonic uses to prevent chain-drinking.
 
 ### Mystery box
 - A single box exists on the map at a time, picked from a configurable list of coordinates, and relocates to a new spot on a timer (or immediately after being looted).
-- Opening it (in range, on a cooldown) rolls a random haul: several regular herbs plus exactly one guaranteed rare orchid.
+- Opening it (in range, on a cooldown) rolls a random haul: several regular herbs plus exactly one guaranteed rare orchid. If the player can't carry the haul the box stays put. Unknown items in the loot pools are skipped with a console warning at start.
 - Same server-authoritative validation as gathering: distance, cooldown, and one-shot looting so two players can't loot the same box.
 
 ### Discord webhook logging
@@ -52,10 +53,10 @@ All three must be started **before** `rsg-herbalist` in your `server.cfg`.
 ## Installation
 
 1. Drop the `rsg-herbalist` folder into your server's `resources` directory.
-2. Add the herbalist job to your `rsg-core` jobs config. Copy the contents of `installation/shared_jobs.lua` into your rsg-core `shared/jobs.lua` (inside the existing `RSGCore.Jobs = { ... }` table). Skip this if you don't intend to job-lock tonic crafting (`Config.LockTonicCraftingToJob`), though the job still needs to exist if you ever plan to turn that on.
+2. *(Only if you job-lock crafting with `Config.LockTonicCraftingToJob`)* create a `herbalist` job. If your server uses **rsg-multijob**, jobs live in the database, so add it there; `installation/shared_jobs.lua` shows the grades/fields to use. On a stock rsg-core install, paste it into `rsg-core/shared/jobs.lua` instead.
 3. Add the items in `installation/shared_items.lua` to your `rsg-core` (or `rsg-inventory`, depending on your setup) `shared/items.lua`. This covers every herb, all four tonics, and the `mortarpestle` crafting item.
 4. Copy every file in `installation/images/` into your inventory resource's item image folder (wherever `rsg-inventory` serves item icons from - commonly `rsg-inventory/html/images/`). This covers all the herb icons and the mortar & pestle icon.
-   - **Tonic bottle icons are not included.** Add your own `tonic_healing.png`, `tonic_stamina.png`, `tonic_antidote.png`, and `tonic_energy.png` (or change the filenames referenced in `Config.Tonics`) to the same folder - otherwise the crafting menu will show a broken image for those four items.
+   - Tonic icons (`tonic_*.png`) are included too. The crafting UI loads icons from `Config.InventoryImagePath` (default `nui://rsg-inventory/html/images/`) - change it if your inventory serves images from elsewhere.
 5. Add `ensure rsg-herbalist` to your `server.cfg`, after `rsg-core`, `rsg-inventory`, and `ox_lib`.
 6. Start the server. On first start, `Config.Debug = false` by default - flip it to `true` temporarily if you want verbose per-gather/per-craft console tracing while testing.
 
@@ -70,6 +71,7 @@ All gameplay settings live in `shared/config.lua`. Webhook settings are in their
 | Setting | Description |
 |---|---|
 | `Config.Debug` | Verbose console tracing for gathering, crafting, and streaming. Leave `false` in production. |
+| `Config.InventoryImagePath` | Where the crafting UI loads item icons from. |
 
 ### Herb node streaming & pickup ranges
 
@@ -148,6 +150,7 @@ client/
   exports.js                 low-level composite-entity creation export
   client.lua                 herb node streaming, gathering, tonic crafting UI/animations
   mysterybox.lua              mystery box prop streaming + interaction
+  controls.lua                "pick up" input binding helper
 server/
   webhook.lua                 Discord webhook queue/delivery + anti-cheat violation tracking
   server.lua                   gather validation, tonic crafting validation, item granting
@@ -156,10 +159,10 @@ server/
 shared/
   config.lua                   gameplay config
   webhook_config.lua            Discord webhook config
-  controls.lua                  shared "pick up" input binding helper
+  spawns.lua                    deterministic herb spawn list (shared ids for client/server)
   zones_data.lua                herb spawn point data
 html/                         tonic crafting NUI (index.html, script.js, style.css)
-locales/                      player-facing text (en.json)
+locales/                      player-facing text (en, de, el, es, fr, ja, nl, pl, pt-br, ro)
 installation/
   shared_items.lua              item definitions to copy into rsg-core/rsg-inventory
   shared_jobs.lua                herbalist job definition to copy into rsg-core
@@ -167,3 +170,7 @@ installation/
 ```
 
 ---
+
+## Support
+
+If you find this useful, you can support development here: https://buymeacoffee.com/rexshack

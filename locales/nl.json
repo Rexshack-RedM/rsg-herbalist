@@ -28,5 +28,7 @@
     "ui_craft": "Maken",
     "ui_empty": "Er zijn geen tonicumrecepten ingesteld.",
     "ui_seconds_short": "s",
-    "ui_minutes_short": "m"
+    "ui_minutes_short": "m",
+    "craft_inventory_full_description": "You don't have room for the finished tonic. Your ingredients were not used.",
+    "mysterybox_inventory_full_description": "You don't have room to carry what's in this box."
 }

@@ -1,26 +1,17 @@
 ----------------------------------------------------------------------------
--- Herb mystery box
+-- Herb mystery box (client)
 --
--- Purely presentational: renders whatever coord the server last told us the
--- box is at (via rsg-herbalist:client:SetMysteryBox), streams the prop in/out
--- as the player moves, and lets them try to open it in range. The server
--- alone decides where the box is and what's inside it - this file never
--- picks a location or grants an item itself.
+-- Renders whatever coord the server last sent, streams the prop in/out and
+-- lets the player open it in range. The server decides location and loot.
 ----------------------------------------------------------------------------
 
 local mb = Config.MysteryBox
-
-Citizen.Trace('[rsg-herbalist:mysterybox] client script loaded, mb=' .. tostring(mb) .. ' enabled=' .. tostring(mb and mb.enabled) .. '\n')
+if not mb or not mb.enabled then return end
 
 local function Debug(msg)
     if Config.Debug then
-        Citizen.Trace('[rsg-herbalist:mysterybox] ' .. msg .. '\n')
+        print('[rsg-herbalist:mysterybox] ' .. msg)
     end
-end
-
-if not mb or not mb.enabled then
-    Citizen.Trace('[rsg-herbalist:mysterybox] disabled or missing config, stopping here\n')
-    return
 end
 
 local PROP_HASH = GetHashKey(mb.prop)
@@ -28,11 +19,8 @@ local SCOPE_RANGE_LOAD = mb.scopeRangeLoad or 100.0
 local SCOPE_RANGE_UNLOAD = mb.scopeRangeUnload or 120.0
 local PICKUP_RANGE = mb.pickupRange or 3.0
 
-local boxCoord = nil   -- vector3 or nil (no box currently spawned)
-local boxEntity = nil
-local boxLoading = false
-local isOpening = false
-local promptShown = false
+local boxCoord, boxEntity = nil, nil
+local boxLoading, isOpening, promptShown = false, false, false
 
 local function ShowOpenPrompt()
     if promptShown then return end
@@ -48,35 +36,27 @@ end
 
 local function LoadBoxEntity()
     if boxEntity or boxLoading or not boxCoord then return end
-    Debug('LoadBoxEntity: streaming model, hash=' .. tostring(PROP_HASH) .. ' coord=' .. tostring(boxCoord))
     boxLoading = true
     CreateThread(function()
         RequestModel(PROP_HASH)
-        local start = GetGameTimer()
+        local deadline = GetGameTimer() + 10000
         while not HasModelLoaded(PROP_HASH) do
-            if GetGameTimer() - start > 10000 then
-                Debug('box prop failed to stream in within timeout, model=' .. tostring(mb.prop))
+            if GetGameTimer() > deadline then
+                Debug('box prop failed to load: ' .. tostring(mb.prop))
                 boxLoading = false
                 return
             end
             Wait(0)
         end
-        Debug('LoadBoxEntity: model loaded')
 
-        -- boxCoord may have changed (or gone nil) while we were streaming.
         if boxCoord and not boxEntity then
             local c = boxCoord
-            boxEntity = CreateObject(PROP_HASH, c.x, c.y, c.z, false, false, false)
-            if boxEntity and boxEntity ~= 0 then
-                PlaceObjectOnGroundProperly(boxEntity)
-                FreezeEntityPosition(boxEntity, true)
-                Debug('LoadBoxEntity: object created, entity=' .. tostring(boxEntity))
-            else
-                Debug('LoadBoxEntity: CreateObject returned invalid entity')
-                boxEntity = nil
+            local obj = CreateObject(PROP_HASH, c.x, c.y, c.z, false, false, false)
+            if obj ~= 0 then
+                PlaceObjectOnGroundProperly(obj)
+                FreezeEntityPosition(obj, true)
+                boxEntity = obj
             end
-        else
-            Debug('LoadBoxEntity: boxCoord changed/cleared while streaming, skipping create')
         end
         SetModelAsNoLongerNeeded(PROP_HASH)
         boxLoading = false
@@ -91,16 +71,11 @@ local function UnloadBoxEntity()
 end
 
 RegisterNetEvent('rsg-herbalist:client:SetMysteryBox', function(coord)
-    Debug('SetMysteryBox received, coord=' .. tostring(coord))
     UnloadBoxEntity()
+    HideOpenPrompt()
     boxCoord = coord
 end)
 
--- Ask the server for the current box location as soon as we're ready to
--- receive it, rather than relying solely on the server's one-off broadcast
--- (RelocateBox() on server start) or the OnPlayerLoaded resync, neither of
--- which reliably reaches a client that's already connected when this
--- resource (re)starts.
 CreateThread(function()
     TriggerServerEvent('rsg-herbalist:server:requestMysteryBox')
 end)
@@ -112,53 +87,29 @@ local function TryOpenBox()
 
     local ped = PlayerPedId()
     TaskStartScenarioInPlace(ped, 'WORLD_HUMAN_CROUCH_INSPECT', 0, true)
-    local completed
-    if Config.GatherProgressBarEnabled then
-        completed = lib.progressCircle({
-            duration = Config.GatherDurationMs,
-            label = locale('opening_mysterybox'),
-            position = 'bottom',
-            useWhileDead = false,
-            canCancel = true,
-            disable = { car = true, move = true, combat = true },
-        })
-    else
-        Wait(Config.GatherDurationMs)
-        completed = true
-    end
+    local completed = ProgressOrWait(Config.GatherDurationMs, locale('opening_mysterybox'), Config.GatherProgressBarEnabled)
     ClearPedTasks(ped)
-    if not completed then isOpening = false; return end
 
-    TriggerServerEvent('rsg-herbalist:server:openMysteryBox')
+    if completed and boxCoord then
+        TriggerServerEvent('rsg-herbalist:server:openMysteryBox')
+    end
     isOpening = false
 end
-
--- IsPickupControlPressed lives in shared/controls.lua (loaded before this
--- file) so it's not duplicated between this and client/client.lua.
-
-local lastDistDebugAt = 0
 
 CreateThread(function()
     while true do
         local sleep = 1000
         if boxCoord then
-            local playerPos = GetEntityCoords(PlayerPedId())
-            local dist = #(playerPos - boxCoord)
-
-            if Config.Debug and (GetGameTimer() - lastDistDebugAt) > 5000 then
-                lastDistDebugAt = GetGameTimer()
-                Debug('dist to box=' .. tostring(dist) .. ' boxEntity=' .. tostring(boxEntity) .. ' playerPos=' .. tostring(playerPos))
-            end
+            local ped = PlayerPedId()
+            local dist = #(GetEntityCoords(ped) - boxCoord)
 
             if not boxEntity then
-                if dist <= SCOPE_RANGE_LOAD then
-                    LoadBoxEntity()
-                end
+                if dist <= SCOPE_RANGE_LOAD then LoadBoxEntity() end
             elseif dist >= SCOPE_RANGE_UNLOAD then
                 UnloadBoxEntity()
             end
 
-            if boxEntity and dist <= PICKUP_RANGE and not isOpening then
+            if boxEntity and dist <= PICKUP_RANGE and not isOpening and not IsPedOnMount(ped) then
                 sleep = 0
                 ShowOpenPrompt()
                 if IsPickupControlPressed() then
@@ -166,12 +117,8 @@ CreateThread(function()
                 end
             else
                 HideOpenPrompt()
-                if boxEntity and dist <= SCOPE_RANGE_LOAD then
-                    sleep = 250
-                end
+                if boxEntity and dist <= 20.0 then sleep = 250 end
             end
-        else
-            HideOpenPrompt()
         end
         Wait(sleep)
     end

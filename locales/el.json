@@ -28,5 +28,7 @@
     "ui_craft": "Παρασκευή",
     "ui_empty": "Δεν έχουν ρυθμιστεί συνταγές τονωτικών.",
     "ui_seconds_short": "δ",
-    "ui_minutes_short": "λ"
+    "ui_minutes_short": "λ",
+    "craft_inventory_full_description": "You don't have room for the finished tonic. Your ingredients were not used.",
+    "mysterybox_inventory_full_description": "You don't have room to carry what's in this box."
 }

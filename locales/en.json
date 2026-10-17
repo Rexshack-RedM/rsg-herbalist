@@ -1,14 +1,14 @@
 {
     "gathering_herb": "Gathering herb...",
     "inventory_full_title": "Inventory full",
-    "inventory_full_description": "You don't have enough space to carry this herb.",
+    "inventory_full_description": "You don't have enough space to carry this.",
     "crafting_tonic": "Crafting tonic...",
     "craft_locked_title": "Not a herbalist",
     "craft_locked_description": "Only herbalists can use the tonic crafting station.",
     "craft_missing_title": "Missing ingredients",
     "craft_missing_description": "You don't have everything this tonic needs.",
     "tonic_cooldown_title": "Still feeling the effects",
-    "tonic_cooldown_description": "You need to wait a bit before drinking another tonic.",
+    "tonic_cooldown_description": "You need to wait %s more seconds before drinking another tonic.",
     "opening_mysterybox": "Opening box...",
     "open_mysterybox_prompt": "[E] Open Mystery Box",
     "mysterybox_found_title": "Mystery box",
@@ -28,5 +28,7 @@
     "ui_craft": "Craft",
     "ui_empty": "No tonic recipes are configured.",
     "ui_seconds_short": "s",
-    "ui_minutes_short": "m"
+    "ui_minutes_short": "m",
+    "craft_inventory_full_description": "You don't have room for the finished tonic. Your ingredients were not used.",
+    "mysterybox_inventory_full_description": "You don't have room to carry what's in this box."
 }

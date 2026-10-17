@@ -28,5 +28,7 @@
     "ui_craft": "Elaborar",
     "ui_empty": "No hay recetas de tónicos configuradas.",
     "ui_seconds_short": "s",
-    "ui_minutes_short": "min"
+    "ui_minutes_short": "min",
+    "craft_inventory_full_description": "You don't have room for the finished tonic. Your ingredients were not used.",
+    "mysterybox_inventory_full_description": "You don't have room to carry what's in this box."
 }

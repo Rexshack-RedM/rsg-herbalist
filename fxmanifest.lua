@@ -1,5 +1,5 @@
-fx_version "adamant"
-games {"rdr3"}
+fx_version "cerulean"
+game "rdr3"
 rdr3_warning "I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships."
 lua54 'yes'
 ox_lib 'locale'
@@ -7,18 +7,19 @@ ox_lib 'locale'
 author 'RexShack'
 name 'rsg-herbalist'
 description 'Herbalist script for RSG Framework'
-version '3.0.0'
+version '3.0.1'
 
 shared_scripts {
     '@ox_lib/init.lua',
     'shared/config.lua',
     'shared/webhook_config.lua',
     'shared/zones_data.lua',
+    'shared/spawns.lua',
 }
 
 client_scripts {
     'client/exports.js',
-    'shared/controls.lua',
+    'client/controls.lua',
     'client/client.lua',
     'client/mysterybox.lua'
 }

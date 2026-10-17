@@ -28,5 +28,7 @@
     "ui_craft": "調合",
     "ui_empty": "トニックのレシピが設定されていません。",
     "ui_seconds_short": "秒",
-    "ui_minutes_short": "分"
+    "ui_minutes_short": "分",
+    "craft_inventory_full_description": "You don't have room for the finished tonic. Your ingredients were not used.",
+    "mysterybox_inventory_full_description": "You don't have room to carry what's in this box."
 }

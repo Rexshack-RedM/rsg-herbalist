@@ -7,6 +7,8 @@
 
     // UI strings are supplied by Lua (ox_lib locales/*.json) on every open.
     let L = {};
+    let imagePath = 'nui://rsg-inventory/html/images/';
+    let isOpen = false;
     function t(key) {
         return L[key] ?? '';
     }
@@ -55,7 +57,7 @@
         const ok = ingredient.have >= ingredient.required;
         return `
             <div class="ingredient-pill ${ok ? 'ok' : 'short'}">
-                <img src="../installation/images/${escapeHtml(ingredient.image)}" onerror="this.style.display='none'">
+                <img src="${imagePath}${escapeHtml(ingredient.image)}" onerror="this.style.display='none'">
                 <span>${escapeHtml(ingredient.label)}</span>
                 <span class="ingredient-count">${ingredient.have}/${ingredient.required}</span>
             </div>
@@ -67,7 +69,7 @@
         return `
             <div class="recipe-card" data-id="${escapeHtml(tonic.id)}">
                 <div class="recipe-icon">
-                    <img src="../installation/images/${escapeHtml(tonic.image)}" onerror="this.style.display='none'">
+                    <img src="${imagePath}${escapeHtml(tonic.image)}" onerror="this.style.display='none'">
                 </div>
                 <div class="recipe-body">
                     <div class="recipe-top-row">
@@ -98,8 +100,9 @@
             btn.addEventListener('click', () => {
                 if (btn.disabled) return;
                 const id = btn.getAttribute('data-id');
+                isOpen = false;
+                appEl.classList.add('hidden');
                 post('craftTonic', { id });
-                close();
             });
         });
     }
@@ -154,13 +157,17 @@
     window.addEventListener('mousemove', onDragMove);
     window.addEventListener('mouseup', onDragEnd);
 
-    function open(tonics, strings) {
+    function open(tonics, strings, path) {
+        if (path) imagePath = path;
+        isOpen = true;
         applyLocale(strings);
         render(tonics);
         appEl.classList.remove('hidden');
     }
 
     function close() {
+        if (!isOpen) return;
+        isOpen = false;
         appEl.classList.add('hidden');
         post('close', {});
     }
@@ -168,8 +175,9 @@
     window.addEventListener('message', (event) => {
         const data = event.data || {};
         if (data.action === 'open') {
-            open(data.tonics, data.locale);
+            open(data.tonics, data.locale, data.imagePath);
         } else if (data.action === 'close') {
+            isOpen = false;
             appEl.classList.add('hidden');
         }
     });

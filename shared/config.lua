@@ -2,6 +2,9 @@ Config = {}
 
 Config.Debug = false -- leave off in production; verbose per-gather/per-craft tracing
 
+-- Where the crafting UI loads item icons from (rsg-inventory's image folder).
+Config.InventoryImagePath = 'nui://rsg-inventory/html/images/'
+
 -- Streaming / scope-loading ranges (world units)
 Config.ScopeRangeLoad = 100.0          -- distance at which a herb node starts streaming in
 Config.ScopeRangeUnload = 120.0        -- distance at which a loaded node streams back out
@@ -175,12 +178,12 @@ Config.MysteryBox = {
     herbCountMax = 6,
     herbPool = {
         'herb_agarita', 'herb_alaskan_ginseng', 'herb_american_ginseng', 'herb_bay_boletus',
-        'herb_bitterweed', 'blackberry', 'herb_black_current', 'herb_bloodflower',
+        'herb_bitterweed', 'herb_black_berry', 'herb_black_current', 'herb_bloodflower',
         'herb_burdock_root', 'herb_cardinal_flower', 'herb_chanterelles', 'herb_choc_daisy',
         'herb_common_bullrush', 'herb_creek_plum', 'herb_creeping_thyme', 'herb_crows_garlic',
         'herb_desert_sage', 'herb_english_mace', 'herb_evergreen_huckleberry', 'herb_golden_currant',
         'herb_hummingbird_sage', 'herb_indian_tobacco', 'herb_milkweed', 'herb_oleander_sage',
-        'herb_oregano', 'herb_parasol_mushroom', 'herb_prairie_poppy', 'raspberrypberry',
+        'herb_oregano', 'herb_parasol_mushroom', 'herb_prairie_poppy', 'herb_red_raspberry',
         'herb_red_sage', 'herb_wild_feverfew', 'herb_wild_mint',
         'herb_wild_rhubarb', 'herb_wintergreen_berry', 'herb_wisteria', 'herb_yarrow',
     },
@@ -250,7 +253,7 @@ Config.Tonics = {
         durationMs = 6000,
         ingredients = {
             { item = 'herb_bitterweed',    amount = 1 },
-            { item = 'blackberry',   amount = 2 },
+            { item = 'herb_black_berry', amount = 2 },
             { item = 'herb_golden_currant', amount = 1 },
         },
         output = { item = 'tonic_energy', amount = 1 },

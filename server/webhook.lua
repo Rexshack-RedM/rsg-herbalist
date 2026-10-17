@@ -205,7 +205,7 @@ function Webhook.LogCraft(src, tonic, outcome)
     local title = outcome == 'success' and 'Tonic crafted' or 'Tonic craft refunded'
     local fields = {}
     AddField(fields, 'Player', PlayerFieldValue(src), false)
-    AddField(fields, 'Recipe', tonic.label)
+    AddField(fields, 'Recipe', locale(tonic.label))
     if outcome == 'success' then
         AddField(fields, 'Yield', ('%dx %s'):format(tonic.output.amount, tonic.output.item))
     else
