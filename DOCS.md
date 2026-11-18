@@ -92,4 +92,9 @@ Nothing is stored in the database. Picked nodes, plant rotation and the box loca
 | Webhooks silent | Set `Config.Webhook.enabled`, the category `enabled` and its `url` |
 | Mystery box never appears | `Config.MysteryBox.enabled` and at least one entry in `coords` |
 
+## rsg-skills integration
+
+`Config.Skills = { Enabled, Skill, GatherXP, ExtraYield }`. In `rsg-herbalist:server:gathered`, after the herb is added and the node suppressed, the server calls `AddXP(src, 'herbalism', GatherXP, ...)` and, when `ExtraYield` is on, rolls the `extra_yield` perk for one more herb (only if `CanCarry`). Server side only; skipped when rsg-skills is not started.
+
+
 Support the Project : https://rexshack.tebex.store/
